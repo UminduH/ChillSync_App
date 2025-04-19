@@ -20,20 +20,8 @@ class _HomeScreenState extends State<HomeScreen> {
   final SensorService _sensorService = SensorService();
   bool _isShowingNotificationPopup = false;
 
-  final double _maxAirQuality = 100.0;
-  final double _minHumidity = 30.0;
-  final double _maxHumidity = 70.0;
+  final double _maxAirQuality = 250.0;
   final String _doorStatusOpen = 'Open';
-
-  // Testing Purposes
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      await userProvider.fetchUser("CSYNC0001");
-    });
-  }
 
   void _checkSensorDataAndNotify(BuildContext context, SensorData sensorData) {
     final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
@@ -83,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
 
     // Humidity check
-    if (sensorData.humidity < _minHumidity || sensorData.humidity > _maxHumidity) {
+    if (sensorData.humidity < temperatureSettings.minHumidity || sensorData.humidity > temperatureSettings.maxHumidity) {
       if (!temperatureSettings.humidityOutOfRange) {
         notificationProvider.createNotification(
           NotificationModel(
@@ -91,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
             deviceId: deviceId,
             driverId: userId,
             title: 'Humidity Alert!',
-            message: 'The current humidity (${sensorData.humidity}% RH) is outside the acceptable range ($_minHumidity% RH - $_maxHumidity% RH).',
+            message: 'The current humidity (${sensorData.humidity}% RH) is outside the acceptable range (${temperatureSettings.minHumidity}% RH - ${temperatureSettings.maxHumidity}% RH).',
             timestamp: DateTime.now(),
             type: NotificationType.alert,
           ),
@@ -271,6 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: Colors.white,
           title: const Text('New Notification!'),
           content: const SingleChildScrollView(
             child: ListBody(

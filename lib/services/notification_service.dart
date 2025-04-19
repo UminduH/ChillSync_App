@@ -32,6 +32,7 @@ class NotificationService {
       .collection("Notifications")
       .where('driver_id', isEqualTo: userId)
       .where('is_read', isEqualTo: false)
+      .orderBy('timestamp', descending: true)
       .get();
 
     return snapshot.docs.map((doc) => NotificationModel.fromJson(doc)).toList();

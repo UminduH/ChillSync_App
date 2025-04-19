@@ -14,34 +14,73 @@ class ControlTemperature extends StatefulWidget {
 class _ControlTemperatureState extends State<ControlTemperature> {
   String? _selectedFoodType;
 
-  final Map<String, Map<String, double>> _foodTemperatureRanges = {
-    "fresh-products": {"minTemp": 0.0, "maxTemp": 4.0},
-    "dairy-products": {"minTemp": 0.0, "maxTemp": 4.0},
-    "meat-and-seafood": {"minTemp": -1.0, "maxTemp": 2.0},
-    "packaged-foods": {"minTemp": 10.0, "maxTemp": 21.0},
+  final Map<String, Map<String, dynamic>> _foodStorageSettings = {
+    "fresh-products": {
+      "minTemp": 4.0,
+      "maxTemp": 10.0,
+      "minHumidity": 90.0,
+      "maxHumidity": 95.0,
+    },
+    "dairy-products": {
+      "minTemp": 1.0,
+      "maxTemp": 4.0,
+      "minHumidity": 85.0,
+      "maxHumidity": 95.0,
+    },
+    "meat-and-seafood": {
+      "minTemp": -1.0,
+      "maxTemp": 4.0,
+      "minHumidity": 90.0,
+      "maxHumidity": 95.0,
+    },
+    "packaged-foods": {
+      "minTemp": 10.0,
+      "maxTemp": 20.0,
+      "minHumidity": 50.0,
+      "maxHumidity": 60.0,
+    },
   };
-
-  void initState() {
-    super.initState();
-    _selectedFoodType = Provider.of<TemperatureSettingsProvider>(context, listen: false).selectedFoodType;
-  }
 
   String getStorageDetails() {
     switch (_selectedFoodType) {
       case "fresh-products":
-        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['fresh-products']?['minTemp']}°C to ${_foodTemperatureRanges['fresh-products']?['maxTemp']}°C\nHumidity: Moderate\n\n"
-               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
+        return "- Refrigerated Storage\n"
+              "Temperature: ${_foodStorageSettings['fresh-products']?['minTemp']}°C to ${_foodStorageSettings['fresh-products']?['maxTemp']}°C\n"
+              "Humidity: ${_foodStorageSettings['fresh-products']?['minHumidity']}% to ${_foodStorageSettings['fresh-products']?['maxHumidity']}%\n\n"
+              "- Freezer Storage\n"
+              "Temperature: -18°C or below\n"
+              "Humidity: Minimal (<30%)";
+
       case "dairy-products":
-        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['dairy-products']?['minTemp']}°C to ${_foodTemperatureRanges['dairy-products']?['maxTemp']}°C\nHumidity: Moderate\n\n"
-               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
+        return "- Refrigerated Storage\n"
+              "Temperature: ${_foodStorageSettings['dairy-products']?['minTemp']}°C to ${_foodStorageSettings['dairy-products']?['maxTemp']}°C\n"
+              "Humidity: ${_foodStorageSettings['dairy-products']?['minHumidity']}% to ${_foodStorageSettings['dairy-products']?['maxHumidity']}%\n\n"
+              "- Freezer Storage\n"
+              "Temperature: -18°C or below\n"
+              "Humidity: Minimal (<30%)";
+
       case "meat-and-seafood":
-        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['meat-and-seafood']?['minTemp']}°C to ${_foodTemperatureRanges['meat-and-seafood']?['maxTemp']}°C\nHumidity: Moderate\n\n"
-               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
+        return "- Refrigerated Storage\n"
+              "Temperature: ${_foodStorageSettings['meat-and-seafood']?['minTemp']}°C to ${_foodStorageSettings['meat-and-seafood']?['maxTemp']}°C\n"
+              "Humidity: ${_foodStorageSettings['meat-and-seafood']?['minHumidity']}% to ${_foodStorageSettings['meat-and-seafood']?['maxHumidity']}%\n\n"
+              "- Freezer Storage\n"
+              "Temperature: -18°C or below\n"
+              "Humidity: Minimal (<30%)";
+
       case "packaged-foods":
-        return "- Dry Storage\nTemperature: ${_foodTemperatureRanges['packaged-foods']?['minTemp']}°C to ${_foodTemperatureRanges['packaged-foods']?['maxTemp']}°C\nHumidity: Low";
+        return "- Dry Storage\n"
+              "Temperature: ${_foodStorageSettings['packaged-foods']?['minTemp']}°C to ${_foodStorageSettings['packaged-foods']?['maxTemp']}°C\n"
+              "Humidity: ${_foodStorageSettings['packaged-foods']?['minHumidity']}% to ${_foodStorageSettings['packaged-foods']?['maxHumidity']}%";
+
       default:
         return "Select a food type to display the storage instructions.";
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedFoodType = Provider.of<TemperatureSettingsProvider>(context, listen: false).selectedFoodType;
   }
 
   @override
@@ -131,10 +170,12 @@ class _ControlTemperatureState extends State<ControlTemperature> {
               label: 'Set Temperature', 
               onPressed: () {
                 if (_selectedFoodType != null) {
-                  final selectedRange = _foodTemperatureRanges[_selectedFoodType];
+                  final selectedRange = _foodStorageSettings[_selectedFoodType];
                   if (selectedRange != null) {
                     temperatureSettings.setMinTemperature(selectedRange['minTemp']!);
                     temperatureSettings.setMaxTemperature(selectedRange['maxTemp']!);
+                    temperatureSettings.setMinHumidity(selectedRange['minHumidity']!);
+                    temperatureSettings.setMaxHumidity(selectedRange['maxHumidity']!);
                     temperatureSettings.setSelectedFoodType(_selectedFoodType);
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Temperature settings updated for $_selectedFoodType')),

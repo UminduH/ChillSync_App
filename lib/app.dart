@@ -1,8 +1,9 @@
+// import 'package:chillsync/components/main_layout_screen.dart';
 import 'package:chillsync/providers/notification_provider.dart';
 import 'package:chillsync/providers/temperature_settings_provider.dart';
 import 'package:chillsync/providers/user_provider.dart';
 import 'package:chillsync/routes/app_routes.dart';
-import 'package:chillsync/screens/auth/enter_id_screen.dart';
+// import 'package:chillsync/screens/auth/enter_id_screen.dart';
 // import 'package:chillsync/screens/user/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -21,8 +22,8 @@ class ChillSync extends StatelessWidget {
       child: MaterialApp(
         title: 'ChillSync',
         debugShowCheckedModeBanner: false,
-        home: EnterIdScreen(),
-        initialRoute: '/intro',
+        // home: MainLayoutScreen(),
+        initialRoute: "/intro",
         routes: AppRoutes.routes,
       ),
     );
