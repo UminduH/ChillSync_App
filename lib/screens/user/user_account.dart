@@ -1,5 +1,7 @@
 import 'package:chillsync/components/custom_main_app_bar.dart';
+import 'package:chillsync/providers/user_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserAccountScreen extends StatefulWidget {
   const UserAccountScreen({super.key});
@@ -14,21 +16,29 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Logout Confirmation"),
-          content: SizedBox(
+          backgroundColor: Colors.white,
+          title: const Text("Logout Confirmation"),
+          content: const SizedBox(
             width: 300,
-            child: Text("Are you sure you want to logout from this app ?")),
+            child: Text("Are you sure you want to logout from this app?")),
           actions: [
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blueAccent,
+              ),
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("No")),
+              child: const Text("No")),
             TextButton(
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blueAccent,
+              ),
               onPressed: () async {
-                Navigator.pushNamed(context, '/enter-id');
+                Navigator.pop(context);
+                Navigator.pushNamedAndRemoveUntil(context, '/enter-id', (Route<dynamic> route) => false);
               },
-              child: Text("Yes")
+              child: const Text("Yes"),
             ),
           ],
         );
@@ -41,29 +51,43 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
     return Scaffold(
       appBar: CustomMainAppbar(title: 'User Profile', showLeading: false),
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 60,
-              child: Icon(Icons.person, size: 60, color: Colors.white),
-            ),
-            SizedBox(height: 30),
-            Text('@UserName', style: TextStyle(fontSize: 20)),
-            SizedBox(height: 30),
-            _buildItemCard(Icons.info_outline, 'About Us', "/about-us"),
-            _buildItemCard(Icons.privacy_tip_outlined, 'Privacy Policy', "/privacy-policy"),
-            _buildLogout(),
-            SizedBox(height: 60),
-            Text(
-              "©2025 ChillSync All right reserved. Developed by Group AA (Batch 12 UOP-NSBM) \nApp Version - 1.0.0",
-              style: TextStyle(fontSize: 12, color: Colors.grey),
-              textAlign: TextAlign.center,
-            ),
-          ],
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Consumer<UserProvider>(
+            builder: (context, userProvider, child) {
+              if (userProvider.isLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              final user = userProvider.user;
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const CircleAvatar(
+                    radius: 60,
+                    child: Icon(Icons.person, size: 60, color: Colors.white),
+                  ),
+                  const SizedBox(height: 30),
+                  Text(user!.name, style: TextStyle(fontSize: 20)),
+                  const SizedBox(height: 30),
+                  _buildItemCard(Icons.info_outline, 'About Us', "/about-us"),
+                  _buildItemCard(Icons.privacy_tip_outlined, 'Privacy Policy', "/privacy-policy"),
+                  _buildLogout(),
+                  const SizedBox(height: 60),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 6),
+                    child: Text(
+                      "©2025 ChillSync All right reserved. Developed by Group AA (Batch 12 UOP-NSBM) \nApp Version - 1.0.0",
+                      style: TextStyle(fontSize: 12, color: Colors.grey),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -107,10 +131,10 @@ class _UserAccountScreenState extends State<UserAccountScreen> {
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(10),
           ),
-          child: Row(
+          child: const Row(
             children: [
               Icon(Icons.logout, color: Colors.blue),
-              const SizedBox(width: 16),
+              SizedBox(width: 16),
               Text('Logout'),
             ],
           ),

@@ -1,7 +1,9 @@
 import 'package:chillsync/models/sensor_data.dart';
+import 'package:chillsync/providers/user_provider.dart';
 import 'package:chillsync/services/sensor_service.dart';
 import 'package:chillsync/utils/formatters.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -73,13 +75,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 18,
                   ),
                 ),
-                const Text(
-                  "Hello , @Username",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Consumer<UserProvider>(
+                  builder: (context, userProvider, child) {
+                    return Text(
+                      "Hello, ${userProvider.user!.name}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 25,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 20),
                 StreamBuilder<SensorData?>(
@@ -118,9 +124,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         ],
                       );
                     } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
+                      return Center(child: Text('Error: ${snapshot.error}'));
                     } else {
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     }
                   },
                 ),
@@ -192,9 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     color: Colors.white,
                   ),
                 ),
-                const SizedBox(
-                  height: 5,
-                ),
+                const SizedBox(height: 5),
                 Text(
                   status,
                   style: const TextStyle(
