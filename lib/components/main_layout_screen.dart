@@ -1,5 +1,5 @@
 import 'package:chillsync/screens/user/home_screen.dart';
-import 'package:chillsync/screens/user/notifications.dart';
+import 'package:chillsync/screens/user/notifications_screen.dart';
 import 'package:chillsync/screens/user/user_account.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

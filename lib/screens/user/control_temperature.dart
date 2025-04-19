@@ -1,6 +1,8 @@
 import 'package:chillsync/components/custom_button.dart';
 import 'package:chillsync/components/custom_main_app_bar.dart';
+import 'package:chillsync/providers/temperature_settings_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ControlTemperature extends StatefulWidget {
   const ControlTemperature({super.key});
@@ -10,27 +12,33 @@ class ControlTemperature extends StatefulWidget {
 }
 
 class _ControlTemperatureState extends State<ControlTemperature> {
-  String? _selectedMethod;
+  String? _selectedFoodType;
+
+  final Map<String, Map<String, double>> _foodTemperatureRanges = {
+    "fresh-products": {"minTemp": 0.0, "maxTemp": 4.0},
+    "dairy-products": {"minTemp": 0.0, "maxTemp": 4.0},
+    "meat-and-seafood": {"minTemp": -1.0, "maxTemp": 2.0},
+    "packaged-foods": {"minTemp": 10.0, "maxTemp": 21.0},
+  };
+
+  void initState() {
+    super.initState();
+    _selectedFoodType = Provider.of<TemperatureSettingsProvider>(context, listen: false).selectedFoodType;
+  }
 
   String getStorageDetails() {
-    //sample data
-    switch (_selectedMethod) {
+    switch (_selectedFoodType) {
       case "fresh-products":
-        return "- Dry Storage\nTemperature: 50°F to 70°F (10°C to 21°C)\nHumidity: Low (to prevent mold and bacteria growth)\n\n"
-               "- Refrigerated Storage\nTemperature: 32°F to 40°F (0°C to 4°C)\nHumidity: Moderate (to retain food freshness)\n\n"
-               "- Freezer Storage\nTemperature: 0°F (-18°C) or below\nHumidity: Minimal (to avoid freezer burn)";
+        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['fresh-products']?['minTemp']}°C to ${_foodTemperatureRanges['fresh-products']?['maxTemp']}°C\nHumidity: Moderate\n\n"
+               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
       case "dairy-products":
-        return "- Dry Storage\nTemperature: 60°F to 70°F (10°C to 21°C)\nHumidity: Low (to prevent mold and bacteria growth)\n\n"
-               "- Refrigerated Storage\nTemperature: 32°F to 40°F (0°C to 4°C)\nHumidity: Moderate (to retain food freshness)\n\n"
-               "- Freezer Storage\nTemperature: 0°F (-18°C) or below\nHumidity: Minimal (to avoid freezer burn)";
+        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['dairy-products']?['minTemp']}°C to ${_foodTemperatureRanges['dairy-products']?['maxTemp']}°C\nHumidity: Moderate\n\n"
+               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
       case "meat-and-seafood":
-        return "- Dry Storage\nTemperature: 40°F to 70°F (10°C to 21°C)\nHumidity: Low (to prevent mold and bacteria growth)\n\n"
-               "- Refrigerated Storage\nTemperature: 32°F to 40°F (0°C to 4°C)\nHumidity: Moderate (to retain food freshness)\n\n"
-               "- Freezer Storage\nTemperature: 0°F (-18°C) or below\nHumidity: Minimal (to avoid freezer burn)";
+        return "- Refrigerated Storage\nTemperature: ${_foodTemperatureRanges['meat-and-seafood']?['minTemp']}°C to ${_foodTemperatureRanges['meat-and-seafood']?['maxTemp']}°C\nHumidity: Moderate\n\n"
+               "- Freezer Storage\nTemperature: -18°C or below\nHumidity: Minimal";
       case "packaged-foods":
-        return "- Dry Storage\nTemperature: 30°F to 70°F (10°C to 21°C)\nHumidity: Low (to prevent mold and bacteria growth)\n\n"
-               "- Refrigerated Storage\nTemperature: 32°F to 40°F (0°C to 4°C)\nHumidity: Moderate (to retain food freshness)\n\n"
-               "- Freezer Storage\nTemperature: 0°F (-18°C) or below\nHumidity: Minimal (to avoid freezer burn)";
+        return "- Dry Storage\nTemperature: ${_foodTemperatureRanges['packaged-foods']?['minTemp']}°C to ${_foodTemperatureRanges['packaged-foods']?['maxTemp']}°C\nHumidity: Low";
       default:
         return "Select a food type to display the storage instructions.";
     }
@@ -38,8 +46,10 @@ class _ControlTemperatureState extends State<ControlTemperature> {
 
   @override
   Widget build(BuildContext context) {
+    final temperatureSettings = Provider.of<TemperatureSettingsProvider>(context, listen: false);
+    
     return Scaffold(
-      appBar: CustomMainAppbar(title: 'Control temperature', showLeading: true),
+      appBar: CustomMainAppbar(title: 'Control Temperature', showLeading: true),
       backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(15),
@@ -52,10 +62,10 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 "Fresh Products"
               ),
               value: "fresh-products",
-              groupValue: _selectedMethod,
+              groupValue: _selectedFoodType,
               onChanged: (value) {
                 setState(() {
-                  _selectedMethod = value;
+                  _selectedFoodType = value;
                 });
               },
             ),
@@ -64,10 +74,10 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 "Dairy Products"
               ),
               value: "dairy-products",
-              groupValue: _selectedMethod,
+              groupValue: _selectedFoodType,
               onChanged: (value) {
                 setState(() {
-                  _selectedMethod = value;
+                  _selectedFoodType = value;
                 });
               },
             ),
@@ -76,10 +86,10 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 "Meat and Seafood"
               ),
               value: "meat-and-seafood",
-              groupValue: _selectedMethod,
+              groupValue: _selectedFoodType,
               onChanged: (value) {
                 setState(() {
-                  _selectedMethod = value;
+                  _selectedFoodType = value;
                 });
               },
             ),
@@ -88,10 +98,10 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 "Packaged Foods"
               ),
               value: "packaged-foods",
-              groupValue: _selectedMethod,
+              groupValue: _selectedFoodType,
               onChanged: (value) {
                 setState(() {
-                  _selectedMethod = value;
+                  _selectedFoodType = value;
                 });
               },
             ),
@@ -101,13 +111,13 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 style: TextStyle(fontSize: 16, color: Colors.black),
                 children: [
                   TextSpan(
-                    text: _selectedMethod == "fresh-products"
+                    text: _selectedFoodType == "fresh-products"
                       ? "Fresh Products\n\n"
-                      : _selectedMethod == "dairy-products"
+                      : _selectedFoodType == "dairy-products"
                         ? "Dairy Products\n\n"
-                        : _selectedMethod == "meat-and-seafood"
+                        : _selectedFoodType == "meat-and-seafood"
                           ? "Meat and Seafood\n\n"
-                          : _selectedMethod == "packaged-foods"
+                          : _selectedFoodType == "packaged-foods"
                             ? "Packaged Foods\n\n"
                             : "None\n\n",
                     style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),
@@ -117,7 +127,26 @@ class _ControlTemperatureState extends State<ControlTemperature> {
               ),
             ),
             SizedBox(height: 50),
-            CustomButton(label: 'Proceed', onPressed: (){})
+            CustomButton(
+              label: 'Set Temperature', 
+              onPressed: () {
+                if (_selectedFoodType != null) {
+                  final selectedRange = _foodTemperatureRanges[_selectedFoodType];
+                  if (selectedRange != null) {
+                    temperatureSettings.setMinTemperature(selectedRange['minTemp']!);
+                    temperatureSettings.setMaxTemperature(selectedRange['maxTemp']!);
+                    temperatureSettings.setSelectedFoodType(_selectedFoodType);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Temperature settings updated for $_selectedFoodType')),
+                    );
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Please select a food type')),
+                  );
+                }
+              }
+            ),
           ]
         ),
       ),

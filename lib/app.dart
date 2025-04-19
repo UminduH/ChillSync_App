@@ -1,3 +1,5 @@
+import 'package:chillsync/providers/notification_provider.dart';
+import 'package:chillsync/providers/temperature_settings_provider.dart';
 import 'package:chillsync/providers/user_provider.dart';
 import 'package:chillsync/routes/app_routes.dart';
 import 'package:chillsync/screens/auth/enter_id_screen.dart';
@@ -10,12 +12,17 @@ class ChillSync extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UserProvider(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => TemperatureSettingsProvider()),
+      ],
       child: MaterialApp(
         title: 'ChillSync',
         debugShowCheckedModeBanner: false,
         home: EnterIdScreen(),
+        // initialRoute: "/main-layout-screen",
         routes: AppRoutes.routes,
       ),
     );
