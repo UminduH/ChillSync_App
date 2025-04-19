@@ -22,7 +22,7 @@ class ChillSync extends StatelessWidget {
         title: 'ChillSync',
         debugShowCheckedModeBanner: false,
         home: EnterIdScreen(),
-        // initialRoute: "/main-layout-screen",
+        initialRoute: '/intro',
         routes: AppRoutes.routes,
       ),
     );
