@@ -1,5 +1,6 @@
 import 'package:chillsync/routes/app_routes.dart';
-import 'package:chillsync/screens/auth/enter_id_screen.dart';
+// import 'package:chillsync/screens/auth/enter_id_screen.dart';
+import 'package:chillsync/screens/user/home_screen.dart';
 import 'package:flutter/material.dart';
 
 class ChillSync extends StatelessWidget {
@@ -10,7 +11,7 @@ class ChillSync extends StatelessWidget {
     return MaterialApp(
       title: 'ChillSync',
       debugShowCheckedModeBanner: false,
-      home: EnterIdScreen(),
+      home: HomeScreen(),
       routes: AppRoutes.routes,
     );
   }

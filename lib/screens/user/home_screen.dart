@@ -1,3 +1,5 @@
+import 'package:chillsync/models/sensor_data.dart';
+import 'package:chillsync/services/sensor_service.dart';
 import 'package:chillsync/utils/formatters.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  final SensorService _sensorService = SensorService();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,12 +26,12 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   "${Formatters.formatDate(DateTime.now())} ${Formatters.formatDay(DateTime.now())}",
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.black,
                     fontSize: 18,
                   ),
                 ),
-                Text(
+                const Text(
                   "Hello , @Username",
                   style: TextStyle(
                     color: Colors.black,
@@ -35,24 +39,52 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
-                _progressCard('Current Temperature', 20,100,'F', 'Temperature status'),
-                SizedBox(height: 20),
-                _progressCard('Current Humidity', 50, 100,'% RH','Humidity status'),
-                SizedBox(height: 10),
-                Text(
+                const SizedBox(height: 20),
+                StreamBuilder<SensorData?>(
+                  stream: _sensorService.getLatestSensorDataStream(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final sensorData = snapshot.data!;
+                      return Column(
+                        children: [
+                          _progressCard(
+                            'Current Temperature',
+                            sensorData.temperature,
+                            100,
+                            '°C',
+                            'Temperature status',
+                          ),
+                          const SizedBox(height: 20),
+                          _progressCard(
+                            'Current Humidity',
+                            sensorData.humidity,
+                            100,
+                            '% RH',
+                            'Humidity status',
+                          ),
+                        ],
+                      );
+                    } else if (snapshot.hasError) {
+                      return Text('Error: ${snapshot.error}');
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+                  },
+                ),
+                const SizedBox(height: 10),
+                const Text(
                   "Quick Access",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildQuickAccessButton(context, 'View Map', Icons.map, ''),
-                    SizedBox(width: 20),
+                    _buildQuickAccessButton(context, 'View Map', Icons.map, '/view-map'),
+                    const SizedBox(width: 20),
                     _buildQuickAccessButton(context, 'Set temperature', Icons.thermostat, '/control-temperature'),
                   ],
                 )
@@ -64,7 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _progressCard(String title,double value,double totalValue,String unit, String status){
+  Widget _progressCard(String title, double value, double totalValue, String unit, String status) {
     return Container(
       width: double.infinity,
       height: 200,
@@ -84,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 27,
                 color: Colors.white,
               ),
@@ -94,8 +126,8 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${value.toString()} $unit' ,
-                  style: TextStyle(
+                  '${value.toStringAsFixed(2)} $unit',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -106,7 +138,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 Text(
                   status,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
@@ -116,8 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             //progress bar
             LinearProgressIndicator(
-              value: value/ totalValue,
-              backgroundColor: Color(0xFF0147FC),
+              value: value / totalValue,
+              backgroundColor: const Color(0xFF0147FC),
               valueColor: const AlwaysStoppedAnimation(Colors.white),
               minHeight: 15,
               borderRadius: BorderRadius.circular(100),
@@ -140,8 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(label, textAlign: TextAlign.center,style: TextStyle(fontSize: 15,fontWeight: FontWeight.bold),),
-                SizedBox(height: 8),
+                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
                 Icon(icon, size: 50, color: Colors.blue[700]),
               ],
             ),
