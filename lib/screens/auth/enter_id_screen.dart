@@ -11,7 +11,13 @@ class EnterIdScreen extends StatefulWidget {
 }
 
 class _EnterIdScreenState extends State<EnterIdScreen> {
-  final _driverIdController = TextEditingController();
+  final _deviceIdController = TextEditingController();
+
+  @override
+  void dispose() {
+    _deviceIdController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,36 +59,11 @@ class _EnterIdScreenState extends State<EnterIdScreen> {
                       SizedBox(height: 20),
                       Image.asset("assets/images/login.png", height: 300),
                       CustomTextField(
-                        textName: 'Driver ID',
-                        hintText: 'Enter driver id ',
-                        controller: _driverIdController,
+                        textName: 'Device ID',
+                        hintText: 'Enter Device ID',
+                        controller: _deviceIdController,
                       ),
                       SizedBox(height: 8),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Text(
-                            'Don\'t have an account yet? ',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pushNamed(context, '/signup');
-                            },
-                            child: Text(
-                              'Signup',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blueAccent,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
                     ],
                   ),
                 ),

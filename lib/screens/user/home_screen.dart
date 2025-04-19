@@ -13,6 +13,48 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final SensorService _sensorService = SensorService();
 
+  String _getAirQualityStatus(double ppm) {
+    if (ppm < 50) {
+      return 'Excellent';
+    } else if (ppm < 100) {
+      return 'Good';
+    } else if (ppm < 150) {
+      return 'Moderate';
+    } else if (ppm < 200) {
+      return 'Poor';
+    } else {
+      return 'Very Poor';
+    }
+  }
+
+  String _getTemperatureStatus(double temperature) {
+    if (temperature < 10) {
+      return 'Very Cold';
+    } else if (temperature < 20) {
+      return 'Cold';
+    } else if (temperature < 28) {
+      return 'Comfortable';
+    } else if (temperature < 35) {
+      return 'Warm';
+    } else {
+      return 'Hot';
+    }
+  }
+
+  String _getHumidityStatus(double humidity) {
+    if (humidity < 30) {
+      return 'Very Dry';
+    } else if (humidity < 40) {
+      return 'Dry';
+    } else if (humidity < 60) {
+      return 'Comfortable';
+    } else if (humidity < 70) {
+      return 'Slightly Humid';
+    } else {
+      return 'Very Humid';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,9 +92,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           _progressCard(
                             'Current Temperature',
                             sensorData.temperature,
-                            100,
+                            50,
                             '°C',
-                            'Temperature status',
+                            _getTemperatureStatus(sensorData.temperature),
+                            Icons.thermostat,
                           ),
                           const SizedBox(height: 20),
                           _progressCard(
@@ -60,7 +103,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             sensorData.humidity,
                             100,
                             '% RH',
-                            'Humidity status',
+                            _getHumidityStatus(sensorData.humidity),
+                            Icons.water_drop,
+                          ),
+                          const SizedBox(height: 20),
+                          _progressCard(
+                            'Air Quality',
+                            sensorData.airQuality,
+                            500,
+                            'PPM',
+                            _getAirQualityStatus(sensorData.airQuality),
+                            Icons.air,
                           ),
                         ],
                       );
@@ -96,10 +149,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _progressCard(String title, double value, double totalValue, String unit, String status) {
+  Widget _progressCard(String title, double value, double totalValue, String unit, String status, IconData icon) {
     return Container(
       width: double.infinity,
-      height: 200,
+      height: 180,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
         gradient: const LinearGradient(
@@ -114,12 +167,18 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 27,
-                color: Colors.white,
-              ),
+            Row(
+              children: [
+                Icon(icon, color: Colors.white, size: 30),
+                const SizedBox(width: 10),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 27,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             Row(
@@ -172,9 +231,9 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
                 Icon(icon, size: 50, color: Colors.blue[700]),
+                const SizedBox(height: 8),
+                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
               ],
             ),
           ),

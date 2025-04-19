@@ -2,7 +2,7 @@ class SensorData {
   final double accelX;
   final double accelY;
   final double accelZ;
-  final String airQuality;
+  final double airQuality;
   final String doorStatus;
   final double humidity;
   final double latitude;
@@ -28,7 +28,7 @@ class SensorData {
       accelX: double.tryParse(json['accelX']?.toString() ?? '0.04') ?? 0.04,
       accelY: double.tryParse(json['accelY']?.toString() ?? '0.39') ?? 0.39,
       accelZ: double.tryParse(json['accelZ']?.toString() ?? '11.30') ?? 11.30,
-      airQuality: json['airQuality']?.toString() ?? '186',
+      airQuality: double.tryParse(json['airQuality']?.toString() ?? '186') ?? 186,
       doorStatus: json['doorStatus']?.toString() ?? 'Closed',
       humidity: double.tryParse(json['humidity']?.toString() ?? '64.40') ?? 64.40,
       latitude: double.tryParse(json['latitude']?.toString() ?? '6.806010') ?? 6.806010,

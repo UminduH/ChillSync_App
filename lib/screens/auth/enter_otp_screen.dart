@@ -14,6 +14,12 @@ class _EnterOtpScreenState extends State<EnterOtpScreen> {
   final _otpController = TextEditingController();
 
   @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
