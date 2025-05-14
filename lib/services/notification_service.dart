@@ -5,8 +5,18 @@ class NotificationService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   // Create a notification
-  Future<void> createNotification(NotificationModel notification) async {
+  Future<void> createNotification(NotificationModel notification, String userId) async {
     try {
+      // Delete existing notifications (if any)
+      final existingNotifications = await _db
+        .collection('Notifications')
+        .where('driver_id', isEqualTo: userId)
+        .get();
+      
+      for (final doc in existingNotifications.docs) {
+        await _db.collection('Notifications').doc(doc.id).delete();
+      }
+
       await _db.collection("Notifications").doc(notification.notificationId).set(notification.toJson());
     } catch (e) {
       throw Exception("Failed to create notification: $e");

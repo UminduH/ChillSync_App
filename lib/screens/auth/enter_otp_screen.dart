@@ -128,7 +128,7 @@ class _EnterOtpScreenState extends State<EnterOtpScreen> {
     if (isCorrectOtp) {
       Navigator.pushNamedAndRemoveUntil(
         context,
-        "/main-layout-screen",
+        "/home",
         (route) => false,
       );
     }

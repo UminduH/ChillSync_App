@@ -5,9 +5,11 @@ import 'package:chillsync/providers/temperature_settings_provider.dart';
 import 'package:chillsync/providers/user_provider.dart';
 import 'package:chillsync/services/sensor_service.dart';
 import 'package:chillsync/utils/formatters.dart';
+import 'package:chillsync/utils/helpers.dart';
 import 'package:chillsync/utils/sensor_status.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -42,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
             message: 'The current temperature (${sensorData.temperature}°C) is outside the acceptable range (${temperatureSettings.minTemperature}°C - ${temperatureSettings.maxTemperature}°C).',
             timestamp: DateTime.now(),
             type: NotificationType.alert,
-          ),
+          ), userId,
         );
         temperatureSettings.tempOutOfRange = true;
       }
@@ -62,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             message: 'The current air quality (${sensorData.airQuality} PPM) exceeds the acceptable limit ($_maxAirQuality PPM).',
             timestamp: DateTime.now(),
             type: NotificationType.warning,
-          ),
+          ), userId,
         );
         temperatureSettings.airQualityOutOfRange = true;
       }
@@ -82,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
             message: 'The current humidity (${sensorData.humidity}% RH) is outside the acceptable range (${temperatureSettings.minHumidity}% RH - ${temperatureSettings.maxHumidity}% RH).',
             timestamp: DateTime.now(),
             type: NotificationType.alert,
-          ),
+          ), userId,
         );
         temperatureSettings.humidityOutOfRange = true;
       }
@@ -102,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
             message: 'The vehicle door is currently open.',
             timestamp: DateTime.now(),
             type: NotificationType.warning,
-          ),
+          ), userId,
         );
         temperatureSettings.doorOpen = true;
       }
@@ -254,40 +256,61 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showNewNotificationPopup(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.white,
-          title: const Text('New Notification!'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('You have a new notification in the Notifications tab.'),
-              ],
+    final currentRoute = ModalRoute.of(context)?.settings.name;
+
+    Helpers.debugPrintWithBorder("Route: $currentRoute");
+
+    // Only show popup if not on the notifications screen
+    if (currentRoute == '/notifications') return;
+
+    _isShowingNotificationPopup = true;
+    
+    await Flushbar(
+      margin: const EdgeInsets.all(8),
+      borderRadius: BorderRadius.circular(8),
+      backgroundColor: Colors.white,
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black26,
+          offset: Offset(0, 2),
+          blurRadius: 6,
+        ),
+      ],
+      duration: const Duration(seconds: 5),
+      flushbarPosition: FlushbarPosition.TOP,
+      icon: const Icon(Icons.notifications, color: Colors.blueAccent),
+      titleText: const Text(
+        'New Notification!',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 16,
+          color: Colors.black,
+        ),
+      ),
+      messageText: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Expanded(
+            child: Text(
+              'You have a new notification.',
+              style: TextStyle(color: Colors.black87),
             ),
           ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                _isShowingNotificationPopup = false;
-                Navigator.of(context).pop();
-                Navigator.pushNamed(context, '/notifications');
-              },
-              child: const Text('View Notifications', style: TextStyle(color: Colors.blueAccent)),
+          TextButton(
+            onPressed: () {
+              _isShowingNotificationPopup = false;
+              Navigator.pushNamed(context, '/notifications');
+            },
+            child: const Text(
+              'View',
+              style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold),
             ),
-            TextButton(
-              onPressed: () {
-                _isShowingNotificationPopup = false;
-                Navigator.of(context).pop();
-              },
-              child: const Text('Dismiss', style: TextStyle(color: Colors.redAccent)),
-            ),
-          ],
-        );
-      },
-    );
+          ),
+        ],
+      ),
+    ).show(context);
+
+    _isShowingNotificationPopup = false;
   }
 
   Widget _progressCard(String title, double value, double totalValue, String unit, String status, IconData icon) {

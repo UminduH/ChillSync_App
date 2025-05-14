@@ -39,6 +39,12 @@ class _ControlTemperatureState extends State<ControlTemperature> {
       "minHumidity": 50.0,
       "maxHumidity": 60.0,
     },
+    "general-test": {
+      "minTemp": 20.0,
+      "maxTemp": 30.0,
+      "minHumidity": 40.0,
+      "maxHumidity": 60.0,
+    },
   };
 
   String getStorageDetails() {
@@ -71,6 +77,11 @@ class _ControlTemperatureState extends State<ControlTemperature> {
         return "- Dry Storage\n"
               "Temperature: ${_foodStorageSettings['packaged-foods']?['minTemp']}°C to ${_foodStorageSettings['packaged-foods']?['maxTemp']}°C\n"
               "Humidity: ${_foodStorageSettings['packaged-foods']?['minHumidity']}% to ${_foodStorageSettings['packaged-foods']?['maxHumidity']}%";
+      
+      case "general-test":
+        return "- Room Temperature Conditions\n"
+              "Temperature: ${_foodStorageSettings['general-test']?['minTemp']}°C to ${_foodStorageSettings['general-test']?['maxTemp']}°C\n"
+              "Humidity: ${_foodStorageSettings['general-test']?['minHumidity']}% to ${_foodStorageSettings['general-test']?['maxHumidity']}%";
 
       default:
         return "Select a food type to display the storage instructions.";
@@ -144,6 +155,16 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                 });
               },
             ),
+            RadioListTile<String>(
+              title: Text("General Test Range (Room Temperature)"),
+              value: "general-test",
+              groupValue: _selectedFoodType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedFoodType = value;
+                });
+              },
+            ),
             SizedBox(height: 20),
             RichText(
               text: TextSpan(
@@ -158,7 +179,9 @@ class _ControlTemperatureState extends State<ControlTemperature> {
                           ? "Meat and Seafood\n\n"
                           : _selectedFoodType == "packaged-foods"
                             ? "Packaged Foods\n\n"
-                            : "None\n\n",
+                            : _selectedFoodType == "general-test"
+                              ? "General Test Range\n\n"
+                              : "None\n\n",
                     style: TextStyle(fontStyle: FontStyle.italic,fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: getStorageDetails()),

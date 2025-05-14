@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 class NotificationProvider extends ChangeNotifier {
   final NotificationService _notificationService = NotificationService();
   List<NotificationModel> _notifications = [];
+  int _notificationCount = 0;
   bool _isLoading = false;
 
   final newNotificationNotifier = ValueNotifier<bool>(false);
 
   List<NotificationModel> get notifications => _notifications;
+  int get notificationCount => _notificationCount;
   bool get isLoading => _isLoading;
 
   // Method to clear the new notification flag
@@ -25,6 +27,7 @@ class NotificationProvider extends ChangeNotifier {
 
     try {
       _notifications = await _notificationService.getUserNotifications(userId);
+      _notificationCount = _notifications.where((notif) => !notif.isRead).length;
     } catch (e) {
       Helpers.debugPrintWithBorder("Error fetching user notifications: $e");
     }
@@ -34,9 +37,9 @@ class NotificationProvider extends ChangeNotifier {
   }
 
   // Create a notification
-  Future<void> createNotification(NotificationModel notification) async {
+  Future<void> createNotification(NotificationModel notification, String userId) async {
     try {
-      await _notificationService.createNotification(notification);
+      await _notificationService.createNotification(notification, userId);
 
       newNotificationNotifier.value = true;
       Future.delayed(const Duration(milliseconds: 500), () {
@@ -58,6 +61,7 @@ class NotificationProvider extends ChangeNotifier {
       if (index != -1) {
         _notifications[index].isRead = true;
       }
+      _notificationCount = _notifications.where((notif) => !notif.isRead).length;
 
       notifyListeners();
 
