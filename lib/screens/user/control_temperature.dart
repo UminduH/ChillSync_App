@@ -91,7 +91,7 @@ class _ControlTemperatureState extends State<ControlTemperature> {
   @override
   void initState() {
     super.initState();
-    _selectedFoodType = Provider.of<TemperatureSettingsProvider>(context, listen: false).selectedFoodType;
+    _selectedFoodType = Provider.of<TemperatureSettingsProvider>(context, listen: false).selectedFoodType ?? 'fresh-products';
   }
 
   @override

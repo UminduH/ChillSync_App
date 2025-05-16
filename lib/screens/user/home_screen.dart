@@ -149,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Consumer<UserProvider>(
                           builder: (context, userProvider, child) {
                             return Text(
-                              "Hello, ${userProvider.user!.name}",
+                              "Hello, ${userProvider.user?.name ?? 'User'}",
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 25,
@@ -395,7 +395,14 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Icon(icon, size: 50, color: Colors.blue[700]),
                 const SizedBox(height: 8),
-                Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+                Text(
+                  label, 
+                  textAlign: TextAlign.center, 
+                  style: const TextStyle(
+                    fontSize: 15, 
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ],
             ),
           ),
